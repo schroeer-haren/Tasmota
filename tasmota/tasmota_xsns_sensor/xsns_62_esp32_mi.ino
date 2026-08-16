@@ -724,12 +724,6 @@ void MI32Init(void) {
   #endif
     const std::string name(TasmotaGlobal.hostname);
     NimBLEDevice::init(name);
-    // Raise the preferred ATT MTU. Without this call NimBLE stays at its
-    // default (256 bytes), because Tasmota never sets it. Peers that expect a
-    // larger MTU from their counterpart -- the Maytronics power supply asks
-    // for 512 -- may otherwise stay silent. Asking for more is harmless: the
-    // negotiated value is always the minimum of both sides.
-    NimBLEDevice::setMTU(512);
     #ifdef CONFIG_BT_NIMBLE_NVS_PERSIST
       NimBLEDevice::setSecurityAuth(true, false, true); // with BLE_HS_IO_NO_INPUT_OUTPUT
     #else
