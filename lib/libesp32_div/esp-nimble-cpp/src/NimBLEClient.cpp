@@ -1220,6 +1220,25 @@ int NimBLEClient::handleGapEvent(struct ble_gap_event* event, void* arg) {
             return 0;
         } // BLE_GAP_EVENT_PASSKEY_ACTION
 
+# if MYNEWT_VAL(BLE_ROLE_PERIPHERAL)
+        case BLE_GAP_EVENT_SUBSCRIBE:
+        case BLE_GAP_EVENT_NOTIFY_TX: {
+            // Reverse role: this connection was opened by the client, but the
+            // event belongs to the local GATT server. NimBLE delivers every
+            // event of a connection only to its initiator, so without this
+            // bridge the server never learns that the peer subscribed - and
+            // therefore never sends notifications to it.
+            // NimBLEServer already contains the mirror image of this bridge
+            // for BLE_GAP_EVENT_NOTIFY_RX (server owns the link, notification
+            // arrives for the client).
+            NimBLEServer* pServer = NimBLEDevice::getServer();
+            if (pServer != nullptr) {
+                NimBLEServer::handleGapEvent(event, pServer);
+            }
+            return 0;
+        }
+# endif
+
         default: {
             return 0;
         }

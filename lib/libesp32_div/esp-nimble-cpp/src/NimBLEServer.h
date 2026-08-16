@@ -107,6 +107,7 @@ class NimBLEServer {
 
   private:
     friend class NimBLEDevice;
+    friend class NimBLEClient;
     friend class NimBLEService;
     friend class NimBLECharacteristic;
 # if MYNEWT_VAL(BLE_ROLE_BROADCASTER)
