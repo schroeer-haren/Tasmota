@@ -23,6 +23,22 @@ irgendetwas fehlschlägt.
 wird an den Client weitergereicht, wenn der Server die Verbindung hält).
 Dieser Zweig ergänzt das Spiegelbild.
 
+## Schlanker Build
+
+`dolphin/user_config_override.h` schaltet ab, was dieses Gerät nicht braucht:
+sämtliche Sensortreiber, Displays, Infrarot, Energiezähler, Licht- und
+Rollladensteuerung, Regeln, Skripte, KNX, Domoticz, Zigbee und mehr. Behalten
+werden WLAN, MQTT, Webserver, Dateisystem, Zeit, Berry und der BLE-Teil.
+
+Der Grund ist Arbeitsspeicher, nicht Flash: Mit dem vollen Bluetooth-Build
+blieben nur 22 bis 27 kB frei, und bei so wenig Rest wirft Tasmota als Erstes
+den Webserver ab -- die Oberfläche wird zäh und bricht weg, während das Gerät
+weiterläuft. Mit dieser Konfiguration sind es rund 34 kB, und die Firmware
+schrumpft von 1,8 auf 1,5 MB.
+
+Die Datei muss nach `tasmota/user_config_override.h` kopiert werden; dort ist
+sie von Tasmota aus `.gitignore` ausgenommen, deshalb liegt sie hier.
+
 ## Bauen
 
 Das Berry-Modul `BLE` mit Server-Rolle steckt in MI32 legacy und fehlt im
@@ -31,6 +47,7 @@ offiziellen `tasmota32-bluetooth.bin`, weil dort `USE_BLE_ESP32` gesetzt ist.
 
 ```bash
 cp dolphin/platformio_tasmota_cenv.ini .
+cp dolphin/user_config_override.h tasmota/
 pio run -e tasmota32-dolphin
 ```
 
